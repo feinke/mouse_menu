@@ -12,51 +12,32 @@ export interface IMenu {
   position: IPosition
 }
 
+const menuWeight = 150;
+const menuHeight = 90;
+
 export const StyledMenu = styled(animated.div)(props => ({
-  width: '300px',
+  width: menuWeight,
+  height: menuHeight,
   border: 'solid 1px red',
-  position: 'fixed',
-  // transform: `translate(${props.left}, ${props.top})`,
-  transformOrigin: '0 0'
+  position: 'fixed'
 }));
 
 export const Menu = (props: IMenu) => {
   const [show, setShow] = React.useState(false);
-  // const [position, setPosition] = React.useState({ top: props.position.top, left: props.position.left });
-
-  // const showMenu = useSpring({
-  //   to: async (next, cancel) => {
-  //     await next({ display: show ? 'block' : 'none' })
-  //     await next({
-  //       opacity: show ? 1 : 0,
-  //       transform: show ?
-  //         `translate(${props.position.left}, ${props.position.top})` :
-  //         `translate(${position.left}, ${position.top})`
-  //     })
-  //   },
-  //   from: { opacity: 0, display: 'none', transform: 'translate(0,0)' }
-  // });
 
   const { x } = useSpring({ from: { x: 0 }, x: show ? 1 : 0 });
 
-  const [position, setPosition] = useSpring(() => ({ xy: [0, 0], config: {} }));
+  const [position, setPosition] = useSpring(() => ({ xy: [0, 0], config: { mass: 1, tension: 200, friction: 20 } }));
 
-  const trans1 = (x,y) => {
-    // console.log(params);
+  const trans1 = (x, y) => {
     return `translate3d(${x}px, ${y}px, 0)`;
   };
 
   React.useEffect(() => {
     setShow(props.display);
-    // console.log(props.position);
-
+    console.log(props.position.top);
     setPosition({ xy: [props.position.left, props.position.top] });
   }, [props]);
-
-  React.useEffect(() => {
-    // console.log(position);
-
-  }, [position]);
 
   const onClickLi = (e: React.MouseEvent) => {
     e.stopPropagation();
@@ -67,6 +48,7 @@ export const Menu = (props: IMenu) => {
     <StyledMenu
       style={{
         opacity: x.interpolate({ range: [0, 1], output: [0, 1] }),
+        height: x.interpolate({ range: [0, 1], output: [0, 90] }),
         //@ts-ignore
         transform: position.xy.interpolate(trans1)
       }}>
