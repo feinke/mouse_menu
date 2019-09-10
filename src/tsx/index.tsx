@@ -62,12 +62,6 @@ const MenuContainer = () => {
                 transform: trail.xy.interpolate(trans)
               }}
             />
-            <DotMenu key={index}
-              style={{
-                //@ts-ignore
-                transform: trail.xy.interpolate(trans)
-              }} 
-            />
           </>
         ))}
         Click

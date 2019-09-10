@@ -12,12 +12,13 @@ export interface IMenu {
   position: IPosition
 }
 
+const size = 20;
 const menuWeight = 150;
 const menuHeight = 90;
 
 export const StyledMenu = styled(animated.div)(props => ({
-  width: menuWeight,
-  height: menuHeight,
+  width: size,
+  height: size,
   border: 'solid 1px red',
   position: 'fixed'
 }));
@@ -36,7 +37,7 @@ export const Menu = (props: IMenu) => {
   React.useEffect(() => {
     setShow(props.display);
     console.log(props.position.top);
-    setPosition({ xy: [props.position.left, props.position.top] });
+    setPosition({ xy: [props.position.left-5, props.position.top - 25] });
   }, [props]);
 
   const onClickLi = (e: React.MouseEvent) => {
@@ -48,7 +49,8 @@ export const Menu = (props: IMenu) => {
     <StyledMenu
       style={{
         opacity: x.interpolate({ range: [0, 1], output: [0, 1] }),
-        height: x.interpolate({ range: [0, 1], output: [0, 90] }),
+        width: x.interpolate({ range: [0, 1], output: [size, menuWeight] }),
+        height: x.interpolate({ range: [0, 1], output: [size, menuHeight] }),
         //@ts-ignore
         transform: position.xy.interpolate(trans1)
       }}>
