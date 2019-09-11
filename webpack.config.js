@@ -15,7 +15,7 @@ module.exports = {
 
   resolve: {
     // Add '.ts' and '.tsx' as resolvable extensions.
-    extensions: [".ts", ".tsx", ".jsx", ".js"]
+    extensions: [".ts", ".tsx", ".jsx", ".js", ".css", ".scss"]
   },
 
   module: {
@@ -43,6 +43,26 @@ module.exports = {
         enforce: "pre",
         test: /\.js$/,
         loader: "source-map-loader"
+      },
+      {
+        test: /\.s[ac]ss$/i,
+        use: [
+          "style-loader",
+          "css-loader",
+          {
+            loader: "sass-loader",
+            options: {
+              sourceMap: true
+            }
+          },
+        ]
+      },
+      {
+        test: /\.css$/,
+        use: [
+          "style-loader",
+          "css-loader"
+        ]
       }
     ]
   },
