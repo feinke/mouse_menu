@@ -1,6 +1,9 @@
 import * as React from 'react';
-import { useSpring, animated } from 'react-spring';
+import { useSpring, animated, interpolate } from 'react-spring';
 import styled from 'styled-components';
+import * as variables from '../_variables.scss';
+import { AppContext } from './ContextProvider';
+import { MenuItem } from './MenuItem';
 
 export interface IPosition {
   top: number,
@@ -8,26 +11,25 @@ export interface IPosition {
 }
 
 export interface IMenu {
-  display: boolean,
   position: IPosition
 }
 
 const size = 20;
-const menuWeight = 150;
+const menuWidth = 150;
 const menuHeight = 90;
 
 export const StyledMenu = styled(animated.div)(props => ({
-  width: size,
-  height: size,
-  border: 'solid 1px red',
-  position: 'fixed'
+  width: menuWidth,
+  height: menuHeight,
+  background: variables.minty,
+  position: 'fixed',
+  color: variables.dark,
+  scale: 0.15,
 }));
 
 export const Menu = (props: IMenu) => {
-  const [show, setShow] = React.useState(false);
-
-  const { x } = useSpring({ from: { x: 0 }, x: show ? 1 : 0 });
-
+  const context = React.useContext(AppContext);
+  const { x } = useSpring({ from: { x: 0 }, x: context.isMenuOpen ? 1 : 0 });
   const [position, setPosition] = useSpring(() => ({ xy: [0, 0], config: { mass: 1, tension: 200, friction: 20 } }));
 
   const trans1 = (x, y) => {
@@ -35,30 +37,35 @@ export const Menu = (props: IMenu) => {
   };
 
   React.useEffect(() => {
-    setShow(props.display);
-    console.log(props.position.top);
-    setPosition({ xy: [props.position.left-5, props.position.top - 25] });
+    setPosition({ xy: calculateOffsetPointer(props.position) });
   }, [props]);
 
   const onClickLi = (e: React.MouseEvent) => {
     e.stopPropagation();
-    setShow(false);
+    context.toggleMenu(false);
   };
+
+  const calculateOffsetPointer = (position: IPosition) => {
+    return [
+      position.left - menuWidth * 0.5, position.top - menuHeight * 0.5
+    ]
+  }
 
   return (
     <StyledMenu
+      onClick={() => context.toggleMenu(true) }
       style={{
-        opacity: x.interpolate({ range: [0, 1], output: [0, 1] }),
-        width: x.interpolate({ range: [0, 1], output: [size, menuWeight] }),
-        height: x.interpolate({ range: [0, 1], output: [size, menuHeight] }),
-        //@ts-ignore
-        transform: position.xy.interpolate(trans1)
+        transform: interpolate([
+          //@ts-ignore
+          position.xy.interpolate(trans1),
+          x.interpolate({
+            range: [0, 1],
+            output: [0.1, 1]
+          }).interpolate(x => `scale(${x})`)
+        ],
+          (pos, scale) => `${pos} ${scale}`)
       }}>
-      <ul>
-        <li onClick={onClickLi}>list 1</li>
-        <li onClick={onClickLi}>list 2</li>
-        <li onClick={onClickLi}>list 3</li>
-      </ul>
+      <MenuItem />
     </StyledMenu>
   );
 };
