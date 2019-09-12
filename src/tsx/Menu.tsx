@@ -24,25 +24,24 @@ export const StyledMenu = styled(animated.div)(props => ({
   background: variables.minty,
   position: 'fixed',
   color: variables.dark,
-  scale: 0.15,
+  'will-change': 'transform'
 }));
 
 export const Menu = (props: IMenu) => {
+  const scaleSize = {
+    on: 1,
+    off: 0.1
+  }
+
   const context = React.useContext(AppContext);
-  const { x } = useSpring({ from: { x: 0 }, x: context.isMenuOpen ? 1 : 0 });
+  const menuRef = React.useRef();
+  //@ts-ignore
+  const { x, ...rest } = useSpring({ ref: menuRef, from: { x: 0 }, to: { x: context.isMenuOpen ? 1 : 0 } });
   const [position, setPosition] = useSpring(() => ({ xy: [0, 0], config: { mass: 1, tension: 200, friction: 20 } }));
+  const [scale, setScale] = useSpring(() => ({ size: scaleSize.off }));
 
   const trans1 = (x, y) => {
     return `translate3d(${x}px, ${y}px, 0)`;
-  };
-
-  React.useEffect(() => {
-    setPosition({ xy: calculateOffsetPointer(props.position) });
-  }, [props]);
-
-  const onClickLi = (e: React.MouseEvent) => {
-    e.stopPropagation();
-    context.toggleMenu(false);
   };
 
   const calculateOffsetPointer = (position: IPosition) => {
@@ -51,21 +50,35 @@ export const Menu = (props: IMenu) => {
     ]
   }
 
+  const onClickMenu = () => {
+    context.toggleMenu(true);
+  }
+
+  React.useEffect(() => {
+    setPosition({ xy: calculateOffsetPointer(props.position) });
+  }, [props]);
+
+  React.useEffect(()=>{
+    if(context.isMenuOpen) {
+      setScale({ size: scaleSize.on });
+    }
+    else {
+      setScale({ size: scaleSize.off });
+    }
+  }, [context.isMenuOpen])
+
   return (
     <StyledMenu
-      onClick={() => context.toggleMenu(true) }
+      onClick={onClickMenu}
       style={{
         transform: interpolate([
           //@ts-ignore
           position.xy.interpolate(trans1),
-          x.interpolate({
-            range: [0, 1],
-            output: [0.1, 1]
-          }).interpolate(x => `scale(${x})`)
+          scale.size.interpolate(size => `scale(${size})`)
         ],
           (pos, scale) => `${pos} ${scale}`)
       }}>
-      <MenuItem />
+      <MenuItem menuRef={menuRef} />
     </StyledMenu>
   );
 };
