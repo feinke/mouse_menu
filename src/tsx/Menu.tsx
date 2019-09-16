@@ -36,7 +36,7 @@ export const Menu = (props: IMenu) => {
   const context = React.useContext(AppContext);
   const menuRef = React.useRef();
   //@ts-ignore
-  const { x, ...rest } = useSpring({ ref: menuRef, from: { x: 0 }, to: { x: context.isMenuOpen ? 1 : 0 } });
+  const { x } = useSpring({ ref: menuRef, from: { x: 0 }, to: { x: context.isMenuOpen ? 1 : 0 } });
   const [position, setPosition] = useSpring(() => ({ xy: [0, 0], config: { mass: 1, tension: 200, friction: 20 } }));
   const [scale, setScale] = useSpring(() => ({ size: scaleSize.off }));
 
@@ -50,7 +50,8 @@ export const Menu = (props: IMenu) => {
     ]
   }
 
-  const onClickMenu = () => {
+  const onClickMenu = (e:React.MouseEvent) => {
+    e.stopPropagation();
     context.toggleMenu(true);
   }
 

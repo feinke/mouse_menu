@@ -1,27 +1,11 @@
 import * as React from 'react';
-import { AppContext } from './ContextProvider';
+import { AppContext, IMenuData, MenuData } from './ContextProvider';
 import { useTransition, animated, useChain, ReactSpringHook } from 'react-spring'
 import styled from 'styled-components';
-
-interface IMenuData {
-  name: string,
-  link: string
-}
 
 interface IMenuDataProps {
   menuRef: React.RefObject<ReactSpringHook>
 }
-
-const MenuData: IMenuData[] = [
-  {
-    name: 'item 1',
-    link: '#item1'
-  },
-  {
-    name: 'item 2',
-    link: '#item2'
-  }
-]
 
 const Item = styled(animated.div)`
   transform-origin: 0 50%;
@@ -30,9 +14,10 @@ const Item = styled(animated.div)`
 
 export const MenuItem = (props: IMenuDataProps) => {
   const context = React.useContext(AppContext);
-  const onClickLi = (e: React.MouseEvent) => {
+  const onClickMenuItem = (e: React.MouseEvent, link: string) => {
     e.stopPropagation();
     context.toggleMenu(false);
+    context.setCurrentMenu(link);
   };
 
   const menuItemRef = React.useRef();
@@ -50,7 +35,7 @@ export const MenuItem = (props: IMenuDataProps) => {
   return (
     <div style={{ padding: '20px' }}>
       {menuItemTransistions.map(({ item, key, props }) => (
-        <Item key={key} style={{ ...props }} onClick={onClickLi}>
+        <Item key={key} style={{ ...props }} onClick={(e: React.MouseEvent) => { onClickMenuItem(e, item.link) }}>
           {item.name}
         </Item>
       ))}
