@@ -9,17 +9,23 @@ interface IAppContext {
 
 export interface IMenuData {
   name: string,
-  link: string
+  link: string,
+  close?: boolean
 }
 
 export const MenuData: IMenuData[] = [
   {
     name: 'item 1',
-    link: '#item1'
+    link: 'item1'
   },
   {
     name: 'item 2',
-    link: '#item2'
+    link: 'item2'
+  },
+  {
+    name: 'close',
+    link: '#close',
+    close: true
   }
 ]
 
@@ -27,7 +33,7 @@ export const AppContext = React.createContext<IAppContext | null>(null);
 
 export const ContextProvider = ({ children }) => {
   const [isMenuOpen, toggleMenu] = React.useState(false);
-  const [currentMenu, setCurrentMenu] = React.useState(MenuData[0].link);
+  const [currentMenu, setCurrentMenu] = React.useState('item0');
   const state: IAppContext = {
     isMenuOpen: isMenuOpen,
     toggleMenu: (payload: boolean) => {

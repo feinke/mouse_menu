@@ -14,10 +14,15 @@ const Item = styled(animated.div)`
 
 export const MenuItem = (props: IMenuDataProps) => {
   const context = React.useContext(AppContext);
-  const onClickMenuItem = (e: React.MouseEvent, link: string) => {
+  const onClickMenuItem = (e: React.MouseEvent, menudata: IMenuData) => {
     e.stopPropagation();
-    context.toggleMenu(false);
-    context.setCurrentMenu(link);
+
+    if (menudata.close) {
+      context.toggleMenu(false);
+    }
+    else {
+      context.setCurrentMenu(menudata.link);
+    }
   };
 
   const menuItemRef = React.useRef();
@@ -35,7 +40,7 @@ export const MenuItem = (props: IMenuDataProps) => {
   return (
     <div style={{ padding: '20px' }}>
       {menuItemTransistions.map(({ item, key, props }) => (
-        <Item key={key} style={{ ...props }} onClick={(e: React.MouseEvent) => { onClickMenuItem(e, item.link) }}>
+        <Item key={key} style={{ ...props }} onClick={(e: React.MouseEvent) => { onClickMenuItem(e, item) }}>
           {item.name}
         </Item>
       ))}

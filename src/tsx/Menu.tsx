@@ -24,6 +24,7 @@ export const StyledMenu = styled(animated.div)(props => ({
   background: variables.minty,
   position: 'fixed',
   color: variables.dark,
+  zIndex: 999,
   'will-change': 'transform'
 }));
 
@@ -51,7 +52,7 @@ export const Menu = (props: IMenu) => {
   }
 
   const onClickMenu = (e:React.MouseEvent) => {
-    e.stopPropagation();
+    // e.stopPropagation();
     context.toggleMenu(true);
   }
 
@@ -70,6 +71,7 @@ export const Menu = (props: IMenu) => {
 
   return (
     <StyledMenu
+      draggable={true}
       onClick={onClickMenu}
       style={{
         transform: interpolate([

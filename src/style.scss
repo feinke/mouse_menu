@@ -8,4 +8,14 @@ html, body, #root {
   padding:0;
   background: $dark;
   color: $minty;
+  // overflow: hidden;
+}
+
+.grid-container {
+  display: grid;
+  grid-template-columns: repeat(3, 100vw);
+  grid-auto-rows: 100vh;
+  .active {
+    background:$dark-10;
+  }
 }

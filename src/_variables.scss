@@ -1,7 +1,7 @@
 $minty: #2FBD64;
-$purple: #3A1957;
+$purple: rgb(85, 85, 85);
 $dark: #151F16;
-
+$dark-10: desaturate($dark, 10%);
 :export {
   minty: $minty;
   purple: $purple;
