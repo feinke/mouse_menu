@@ -16,7 +16,7 @@ export const MenuContainer = () => {
   const [currentMenuPosition, setCurrentMenuPosition] = React.useState<IPosition>({ top: 0, left: 0 });
 
 
-  const [, setPosition] = useSpring(() => ({ x: 0, y: 0 }));
+  const [position, setPosition] = useSpring(() => ({ x: 0, y: 0 }));
 
   const transf = (x, y) => {
     return `translate(${x}px, ${y}px)`
@@ -37,19 +37,19 @@ export const MenuContainer = () => {
   };
 
   React.useLayoutEffect(() => {
+    const parent = document.getElementById(context.currentMenu).parentElement.getBoundingClientRect();
     const position = document.getElementById(context.currentMenu).getBoundingClientRect();
-    const x = position.left + window.scrollX;
-    const y = position.top + window.scrollY;
-
-    setPosition({
-      x: x,
-      y: y,
-      reset: true,
-      from: { x: window.scrollX, y: window.scrollY },
-      //@ts-ignore
-      onFrame: props => window.scroll(props.x, props.y)
-    })
-
+    const x = parent.left - position.left;
+    const y = parent.top - position.top;
+    // setPosition({
+    //   x: x,
+    //   y: y,
+    //   reset: true,
+    //   from: { x: window.scrollX, y: window.scrollY },
+    //   //@ts-ignore
+    //   onFrame: props => window.scroll(props.x, props.y)
+    // })
+    setPosition({x, y});
   }, [context.currentMenu]);
 
   return (
@@ -57,10 +57,16 @@ export const MenuContainer = () => {
       <Wrapper onClick={handleClick} onMouseMove={({ clientX, clientY }) => { handleMouseMove(clientX, clientY); }}>
         <Menu position={menuPosition} />
         <animated.div className='grid-container'
-          // style={{
-          //   //@ts-ignore
-          //   transform: position.xy.interpolate(transf)
-          // }}
+          style={{
+            //@ts-ignore
+            //transform: position.xy.interpolate(transf)
+            transform: interpolate([
+              //@ts-ignore
+              position.x.interpolate(x => `${x}`),
+              //@ts-ignore
+              position.y.interpolate(y => `${y}`)
+            ], transf)
+          }}
         >
           {
             Array(9).fill('item').map((v, i) => (

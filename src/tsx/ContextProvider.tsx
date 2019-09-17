@@ -19,8 +19,8 @@ export const MenuData: IMenuData[] = [
     link: 'item1'
   },
   {
-    name: 'item 2',
-    link: 'item2'
+    name: 'item 6',
+    link: 'item6'
   },
   {
     name: 'close',
